@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+var sdtin = os.Stdin
+
 func main() {
 	host, port := parseArgs()
 
@@ -20,25 +22,15 @@ func main() {
 	for {
 		fmt.Print(">")
 		// read in input from stdinh
-		reader := bufio.NewScanner(os.Stdin)
+		reader := bufio.NewScanner(sdtin)
 		reader.Scan()
 		message := reader.Text()
 
-		_, err := conn.Write([]byte(fmt.Sprintln(message)))
+		response, err := handleInput(&conn, message)
 		if err != nil {
-			log.Panicln(err)
-		}
-
-		// listen for reply
-		responser := bufio.NewScanner(conn)
-		if responser.Scan() {
-			response := responser.Text()
-			fmt.Println(response)
-			if response == "bye" {
-				break
-			}
-		} else {
+			log.Println(err)
 			break
 		}
+		fmt.Println(response)
 	}
 }

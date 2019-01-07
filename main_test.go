@@ -8,12 +8,12 @@ import (
 )
 
 func startServer(t *testing.T) *net.Conn {
-
 	listener, err := net.Listen("tcp", ":9090")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	go (func() {
+		defer listener.Close()
 		for {
 			conn, err := listener.Accept()
 			if err != nil {
@@ -49,17 +49,17 @@ func Test_Echo_Server_Mock_OK(t *testing.T) {
 	expected := fmt.Sprintln("echo")
 
 	if _, err := conn.Write([]byte(fmt.Sprintln(expected))); err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 
 	reader := bufio.NewReader(conn)
 	actual, err := reader.ReadString('\n')
 
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 	if expected != actual {
-		t.Fatal(expected, actual, "different messages")
+		t.Error(expected, actual, "different messages")
 	}
 
 	byeServer(&conn, t)
