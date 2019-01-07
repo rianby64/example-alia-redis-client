@@ -9,9 +9,10 @@ import (
 )
 
 func main() {
+	host, port := parseArgs()
 
 	// connect to this socket
-	conn, err := net.Dial("tcp", ":9090")
+	conn, err := net.Dial("tcp", fmt.Sprintf("%v:%v", host, port))
 	if err != nil {
 		log.Panicln(err)
 	}
