@@ -3,17 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
 )
 
-var sdtin = os.Stdin
+var sdtin interface{} = os.Stdin
 
 func main() {
 	host, port := parseArgs()
-
-	// connect to this socket
 	conn, err := net.Dial("tcp", fmt.Sprintf("%v:%v", host, port))
 	if err != nil {
 		log.Panicln(err)
@@ -21,8 +20,7 @@ func main() {
 
 	for {
 		fmt.Print(">")
-		// read in input from stdinh
-		reader := bufio.NewScanner(sdtin)
+		reader := bufio.NewScanner(sdtin.(io.Reader))
 		reader.Scan()
 		message := reader.Text()
 
